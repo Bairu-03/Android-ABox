@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shape_gradient"
+    tools:context=".Activity_signup">
+
+    <TextView
+        android:id="@+id/tV3_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/signup_title"
+        android:textSize="34sp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.089" />
+
+    <EditText
+        android:id="@+id/eT3_ID"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="testaccount"
+        android:drawableStart="@android:drawable/ic_menu_my_calendar"
+        android:hint="@string/signup_account"
+        android:inputType="text"
+        android:textColor="@color/white"
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tV3_title"
+        app:layout_constraintVertical_bias="0.093" />
+
+    <EditText
+        android:id="@+id/eT3_PW"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="123456"
+        android:drawableStart="@android:drawable/ic_lock_idle_lock"
+        android:hint="@string/signup_pw"
+        android:inputType="textPassword"
+        android:textColor="@color/white"
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eT3_ID"
+        app:layout_constraintVertical_bias="0.027" />
+
+    <EditText
+        android:id="@+id/eT3_rePW"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="123456"
+        android:drawableStart="@android:drawable/ic_lock_idle_lock"
+        android:hint="@string/signup_repw"
+        android:inputType="textPassword"
+        android:textColor="@color/white"
+        android:minHeight="48dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eT3_PW"
+        app:layout_constraintVertical_bias="0.035" />
+
+    <!--输入错误提示-->
+    <TextView
+        android:id="@+id/tV3_err"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="6dp"
+        android:textColor="#DFE90B"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eT3_rePW" />
+
+    <Button
+        android:id="@+id/bt3_signup"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:backgroundTint="#2196F3"
+        android:onClick="signup_new"
+        android:text="@string/signup_signup"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.213"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eT3_rePW" />
+
+    <Button
+        android:id="@+id/bt3_back"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:backgroundTint="#2196F3"
+        android:onClick="signup_back"
+        android:text="@string/signup_back"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/eT3_rePW" />
+
+</android.support.constraint.ConstraintLayout>

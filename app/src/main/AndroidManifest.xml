@@ -27,6 +27,14 @@
             android:name=".MainActivity"
             android:exported="true"/>
 
+        <activity
+            android:name=".Activity_login"
+            android:exported="true"/>
+
+        <activity
+            android:name=".Activity_signup"
+            android:exported="true"/>
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />

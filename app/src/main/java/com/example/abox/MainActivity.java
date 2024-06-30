@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Objects;
 
+// APP信息显示页（主）
 public class MainActivity extends AppCompatActivity {
     Boolean socket_state;
     private Button btn_socket;
@@ -62,13 +63,11 @@ public class MainActivity extends AppCompatActivity {
     public void btn_socket(View view) {
         // 若插座已开启，改为关闭
         if(socket_state){
-//            Objects.requireNonNull(getSupportActionBar()).hide();
             btn_socket_draw = getResources().getDrawable(R.drawable.ic_btn_socket_off);
             btn_socket.setCompoundDrawablesWithIntrinsicBounds(null, btn_socket_draw, null, null);
             socket_state = false;
         // 若插座已关闭，改为开启
         } else {
-//            Objects.requireNonNull(getSupportActionBar()).show();
             btn_socket_draw = getResources().getDrawable(R.drawable.ic_btn_socket_on);
             btn_socket.setCompoundDrawablesWithIntrinsicBounds(null, btn_socket_draw, null, null);
             socket_state = true;
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     public class LoginAsyncTask extends AsyncTask<String, Void, ABRet> {
-
         @Override
         protected ABRet doInBackground(String... strings) {
             System.out.println(Arrays.toString(strings));
@@ -100,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class TempAsyncTask extends AsyncTask<String, Void, ABRet> {
-
         @Override
         protected ABRet doInBackground(String... strings) {
             return ABSDK.getInstance().getThStatus("温湿度传感器");
@@ -115,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public class UrlAsyncTask extends AsyncTask<String, Void, String> {
-
         @Override
         protected String doInBackground(String... strings) {
             URL url = null;
@@ -140,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = new MenuInflater(this);
@@ -164,11 +161,6 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .create();
             alertDialog.show();
-        }
-
-        // 标题栏菜单 - 退出登录按钮
-        if(item.getItemId() == R.id.m_logout){
-            Toast.makeText(this, "退出登录...",Toast.LENGTH_LONG).show();
         }
         return super.onOptionsItemSelected(item);
     }
