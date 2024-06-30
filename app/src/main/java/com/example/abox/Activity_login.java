@@ -86,7 +86,7 @@ public class Activity_login extends AppCompatActivity{
                 null, null, null);
 
         if(cursor.getCount() == 0){
-            tV1_err.setText("输入的账号不存在！");
+            tV1_err.setText("账号不存在！");
 
         // 未勾选用户协议
         } else if(!cB1_pro.isChecked()){

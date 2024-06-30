@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Boolean socket_state;
     private Button btn_socket;
     private Drawable btn_socket_draw;
+    private Button btn_tem_hum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         btn_socket_draw = getResources().getDrawable(R.drawable.ic_btn_socket_on);
         btn_socket.setCompoundDrawablesWithIntrinsicBounds(null, btn_socket_draw, null, null);
 
+        btn_tem_hum = findViewById(R.id.btn_tem_hum);
+        btn_tem_hum.setText(getString(R.string.btn_tem_hum, 0, 0));
     }
 
 //    public void buttonClick(View view) {
@@ -56,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
     // 温湿度按钮点击动作
     public void btn_tem_hum(View view) {
-
+        btn_tem_hum = findViewById(R.id.btn_tem_hum);
+        btn_tem_hum.setText(getString(R.string.btn_tem_hum, 25, 50));
     }
 
     // 插座按钮点击动作

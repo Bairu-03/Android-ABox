@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/shape_gradient"
+    android:background="#5689E5"
     tools:context=".Activity_login">
 
     <TextView
@@ -26,6 +26,9 @@
         android:layout_height="wrap_content"
         android:autofillHints="testaccount"
         android:drawableStart="@android:drawable/ic_menu_my_calendar"
+        android:backgroundTint="@color/white"
+        android:background="@drawable/ev_style"
+        android:textColorHint="#A0FFFFFF"
         android:hint="@string/login_account"
         android:inputType="text"
         android:minHeight="48dp"
@@ -37,13 +40,15 @@
         app:layout_constraintTop_toBottomOf="@+id/tV1_Hello"
         app:layout_constraintVertical_bias="0.093" />
 
-    <!--账号或密码错误提示-->
     <EditText
         android:id="@+id/eT1_PW"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:autofillHints="123456"
+        android:background="@drawable/ev_style"
+        android:backgroundTint="@color/white"
         android:drawableStart="@android:drawable/ic_lock_idle_lock"
+        android:textColorHint="#A0FFFFFF"
         android:hint="@string/login_pw"
         android:inputType="textPassword"
         android:minHeight="48dp"
@@ -53,14 +58,15 @@
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/eT1_ID"
-        app:layout_constraintVertical_bias="0.04" />
+        app:layout_constraintVertical_bias="0.055" />
 
     <Button
         android:id="@+id/bt1_login"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="168dp"
-        android:backgroundTint="#2196F3"
+        android:background="@drawable/btn_click_style"
+        android:backgroundTint="#0029AB"
         android:onClick="login"
         android:text="@string/login"
         android:textColor="@color/white"
@@ -75,7 +81,8 @@
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="168dp"
-        android:backgroundTint="#2196F3"
+        android:background="@drawable/btn_click_style"
+        android:backgroundTint="#0029AB"
         android:onClick="signup"
         android:text="@string/login_signup"
         android:textColor="@color/white"
@@ -85,13 +92,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/eT1_PW" />
 
+    <!--账号或密码错误提示-->
     <TextView
         android:id="@+id/tV1_err"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginTop="6dp"
-        android:textColor="#DFE90B"
+        android:textColor="#F2C55C"
+        android:textSize="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/eT1_PW" />
 
@@ -116,7 +125,7 @@
         android:onClick="protocol"
         android:text="@string/login_protocol2"
         android:textAlignment="center"
-        android:textColor="#DFE90B"
+        android:textColor="#0029AB"
         app:layout_constraintBottom_toTopOf="@+id/bt1_login"
         app:layout_constraintStart_toEndOf="@+id/cB1_pro" />
 
