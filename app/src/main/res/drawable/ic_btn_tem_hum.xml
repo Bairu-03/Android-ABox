@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <item
+                android:drawable="@drawable/png_temperature"
+                android:top="5dp"
+                android:start="5dp"
+                android:width="40sp"
+                android:height="40sp"
+                />
+            <item
+                android:drawable="@drawable/png_humidity"
+                android:top="54dp"
+                android:start="5dp"
+                android:width="40sp"
+                android:height="40sp"/>
+        </layer-list>
+    </item>
+</selector>

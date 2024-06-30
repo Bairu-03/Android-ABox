@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <item
+                android:drawable="@drawable/png_socket_on"
+                android:top="15dp"
+                android:bottom="10dp"
+                android:width="60sp"
+                android:height="28sp"
+                />
+        </layer-list>
+    </item>
+</selector>

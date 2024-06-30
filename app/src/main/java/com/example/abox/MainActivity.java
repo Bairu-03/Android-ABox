@@ -1,6 +1,9 @@
 package com.example.abox;
 
+import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -22,32 +26,63 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
+    Boolean socket_state;
+    private Button btn_socket;
+    private Drawable btn_socket_draw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // getSupportActionBar().hide();
+        socket_state = true;
+        btn_socket = findViewById(R.id.btn_socket);
+        btn_socket_draw = getResources().getDrawable(R.drawable.ic_btn_socket_on);
+        btn_socket.setCompoundDrawablesWithIntrinsicBounds(null, btn_socket_draw, null, null);
+
     }
 
-    public void buttonClick(View view) {
-        new LoginAsyncTask().execute("a", "a");
+//    public void buttonClick(View view) {
+//        new LoginAsyncTask().execute("a", "a");
+//    }
+
+//    public void button2Click(View view) {
+//        new TempAsyncTask().execute();
+//    }
+
+    // 温湿度按钮点击动作
+    public void btn_tem_hum(View view) {
+
     }
 
-    public void button2Click(View view) {
-        new TempAsyncTask().execute();
+    // 插座按钮点击动作
+    public void btn_socket(View view) {
+        // 若插座已开启，改为关闭
+        if(socket_state){
+//            Objects.requireNonNull(getSupportActionBar()).hide();
+            btn_socket_draw = getResources().getDrawable(R.drawable.ic_btn_socket_off);
+            btn_socket.setCompoundDrawablesWithIntrinsicBounds(null, btn_socket_draw, null, null);
+            socket_state = false;
+        // 若插座已关闭，改为开启
+        } else {
+//            Objects.requireNonNull(getSupportActionBar()).show();
+            btn_socket_draw = getResources().getDrawable(R.drawable.ic_btn_socket_on);
+            btn_socket.setCompoundDrawablesWithIntrinsicBounds(null, btn_socket_draw, null, null);
+            socket_state = true;
+        }
     }
 
-    public void imageClick(View view) {
-        ImageView imageView = (ImageView)view;
-        imageView.setImageResource(R.drawable.photo);
+    // 人体活动按钮点击动作
+    public void btn_human(View view) {
     }
 
-    public void show(View view) {
+    // 光照强度按钮点击动作
+    public void btn_light(View view) {
     }
+
 
     public class LoginAsyncTask extends AsyncTask<String, Void, ABRet> {
 
@@ -112,9 +147,29 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    private AlertDialog alertDialog;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Toast.makeText(this, "" + item.getItemId(), Toast.LENGTH_SHORT).show();
+        // 标题栏菜单-关于按钮
+        if(item.getItemId() == R.id.m_about){
+            alertDialog = new AlertDialog.Builder(this)
+                    .setTitle("关于APP")
+                    .setMessage("\n    大连海洋大学 - 电子21-1班 - 吕柏儒")
+                    .setIcon(R.mipmap.ic_launcher)
+                    .setPositiveButton("关闭", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            alertDialog.dismiss();
+                        }
+                    })
+                    .create();
+            alertDialog.show();
+        }
+
+        // 标题栏菜单 - 退出登录按钮
+        if(item.getItemId() == R.id.m_logout){
+            Toast.makeText(this, "退出登录...",Toast.LENGTH_LONG).show();
+        }
         return super.onOptionsItemSelected(item);
     }
 }

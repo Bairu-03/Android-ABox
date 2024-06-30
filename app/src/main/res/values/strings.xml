@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">abox</string>
+    <string name="app_name">Abox智能家居</string>
+    <string name="btn_tem_hum">温度: %1$d\n\n湿度: %2$d</string>
+    <string name="btn_socket">插座</string>
+    <string name="btn_human">人体活动</string>
+    <string name="btn_light">光照强度</string>
+    <string name="logout">退出登录</string>
+    <string name="about">关于</string>
 </resources>
