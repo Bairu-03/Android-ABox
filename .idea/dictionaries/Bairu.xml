@@ -2,7 +2,16 @@
   <dictionary name="Bairu">
     <words>
       <w>abox</w>
+      <w>datalist</w>
+      <w>datet</w>
+      <w>hchart</w>
+      <w>humt</w>
+      <w>linename</w>
+      <w>mylist</w>
+      <w>ndate</w>
       <w>repw</w>
+      <w>thchart</w>
+      <w>timet</w>
     </words>
   </dictionary>
 </component>

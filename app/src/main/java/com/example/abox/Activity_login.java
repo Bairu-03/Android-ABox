@@ -6,9 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -19,6 +21,10 @@ import android.widget.Toast;
 
 import android.support.v7.app.AppCompatActivity;
 
+import com.dhc.absdk.ABRet;
+import com.dhc.absdk.ABSDK;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 // APP登录页
@@ -47,8 +53,8 @@ public class Activity_login extends AppCompatActivity{
         // 获取输入法管理器对象（为实现点击输入框外时收起键盘）
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        // 创建数据库
-        mySQLiteOH = new MySQLiteOpenHelper(Activity_login.this, "users.db", null, 1);
+        // 初始化数据库
+        mySQLiteOH = new MySQLiteOpenHelper(Activity_login.this, "appdata.db", null, 1);
     }
 
     @Override
@@ -107,11 +113,9 @@ public class Activity_login extends AppCompatActivity{
                 imm.hideSoftInputFromWindow(eT1_ID.getWindowToken(),0);
                 imm.hideSoftInputFromWindow(eT1_PW.getWindowToken(),0);
 
-                Toast.makeText(Activity_login.this, "登录成功", Toast.LENGTH_SHORT).show();
+                new LoginAsyncTask().execute("a", "a");
 
-                // 跳转到信息显示页面
-                Intent intent = new Intent(Activity_login.this, MainActivity.class);
-                startActivity(intent);
+                tV1_err.setText("正在登录，请稍候...");
 
             } else {
                 tV1_err.setText("密码错误！");
@@ -151,6 +155,30 @@ public class Activity_login extends AppCompatActivity{
                 })
                 .create();
         alertDialog.show();
+    }
+
+    public class LoginAsyncTask extends AsyncTask<String, Void, ABRet> {
+        @Override
+        protected ABRet doInBackground(String... strings) {
+            Log.d("loginAbox","ABox账号密码:"+ Arrays.toString(strings));
+            return ABSDK.getInstance().loginWithUsername("a", "a");
+        }
+
+        @Override
+        protected void onPostExecute(ABRet abRet) {
+            super.onPostExecute(abRet);
+
+            Log.d("loginAbox", "登录过程状态码: " + abRet.getCode());
+
+            if(TextUtils.equals(abRet.getCode(), "20000")){
+                tV1_err.setText("");
+                // 跳转到信息显示页面
+                Intent intent = new Intent(Activity_login.this, MainActivity.class);
+                startActivity(intent);
+            } else {
+                tV1_err.setText("登录失败(错误码：" + abRet.getCode() + ")");
+            }
+        }
     }
 
     // Activity销毁时关闭数据库

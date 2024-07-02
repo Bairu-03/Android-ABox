@@ -3,7 +3,7 @@
     <item>
         <layer-list>
             <item
-                android:drawable="@drawable/png_socket_on"
+                android:drawable="@drawable/png_sock_off"
                 android:top="15dp"
                 android:bottom="10dp"
                 android:width="60sp"

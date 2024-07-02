@@ -35,6 +35,9 @@
             android:name=".Activity_signup"
             android:exported="true"/>
 
+        <activity android:name=".Activity_THchart"
+            android:exported="true"/>
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />

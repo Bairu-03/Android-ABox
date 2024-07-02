@@ -20,17 +20,28 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String sql = "create table users (" +
+        String sql1 = "create table users (" +
                 "id integer primary key autoincrement, " +
                 "username text, " +
                 "password text)";
-        db.execSQL(sql);
+        db.execSQL(sql1);
+
+        String sql2 = "create table data (" +
+                "id integer primary key autoincrement, " +
+                "time text, " +
+                "temperature text, " +
+                "humidity text, " +
+                "human text, " +
+                "light text)";
+        db.execSQL(sql2);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        String sql = "drop table if exists users";
-        db.execSQL(sql);
+        String sql1 = "drop table if exists users";
+        db.execSQL(sql1);
+        String sql2 = "drop table if exists data";
+        db.execSQL(sql2);
         onCreate(db);
     }
 }

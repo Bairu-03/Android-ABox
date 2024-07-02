@@ -42,8 +42,8 @@ public class Activity_signup extends AppCompatActivity {
         // 获取输入法管理器对象（为实现点击输入框外时收起键盘）
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        // 创建数据库
-        mySQLiteOH = new MySQLiteOpenHelper(Activity_signup.this, "users.db", null, 1);
+        // 初始化数据库
+        mySQLiteOH = new MySQLiteOpenHelper(Activity_signup.this, "appdata.db", null, 1);
     }
 
     @Override

@@ -19,6 +19,7 @@
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.173"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,18 +27,18 @@
         app:layout_constraintVertical_bias="0.102" />
 
     <Button
-        android:id="@+id/btn_socket"
+        android:id="@+id/btn_sock"
         android:layout_width="110dp"
         android:layout_height="105dp"
         android:background="@drawable/btn_click_style"
-        android:drawableTop="@drawable/ic_btn_socket_off"
+        android:drawableTop="@drawable/ic_btn_sock_off"
         android:onClick="btn_socket"
         android:text="@string/btn_socket"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintHorizontal_bias="0.518"
         app:layout_constraintStart_toEndOf="@+id/btn_tem_hum"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.102" />
@@ -48,10 +49,10 @@
         android:layout_height="105dp"
         android:background="@drawable/btn_click_style"
         android:drawableTop="@drawable/ic_btn_human_n"
+        android:onClick="btn_human"
         android:text="@string/btn_human"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:onClick="btn_human"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.129"
@@ -65,15 +66,15 @@
         android:layout_height="105dp"
         android:background="@drawable/btn_click_style"
         android:drawableBottom="@drawable/ic_btn_light_4"
+        android:onClick="btn_light"
         android:text="@string/btn_light"
         android:textColor="@color/white"
         android:textSize="20sp"
-        android:onClick="btn_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.428"
+        app:layout_constraintHorizontal_bias="0.442"
         app:layout_constraintStart_toEndOf="@+id/btn_human"
-        app:layout_constraintTop_toBottomOf="@+id/btn_socket"
+        app:layout_constraintTop_toBottomOf="@+id/btn_sock"
         app:layout_constraintVertical_bias="0.124" />
 
 </android.support.constraint.ConstraintLayout>

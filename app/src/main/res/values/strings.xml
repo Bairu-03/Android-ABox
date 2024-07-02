@@ -1,12 +1,13 @@
 <resources>
+    <string name="app_name">Abox智能家居</string>
 
     <!--信息显示页字符串资源-->
-    <string name="app_name">Abox智能家居</string>
-    <string name="btn_tem_hum">温度: %1$d\n\n湿度: %2$d</string>
+    <string name="btn_tem_hum">温度: %1$s\n\n湿度: %2$s</string>
     <string name="btn_socket">插座</string>
     <string name="btn_human">人体活动</string>
     <string name="btn_light">光照强度</string>
     <string name="about">关于</string>
+    <string name="about_info">\n大连海洋大学 – 电子21–1班 – 吕柏儒</string>
 
     <!--登录页字符串资源-->
     <string name="login_welcome">欢迎登录</string>
@@ -24,4 +25,10 @@
     <string name="signup_repw">重新输入密码以确认</string>
     <string name="signup_signup">注册</string>
     <string name="signup_back">返回</string>
+
+    <!--温湿度图表页字符串-->
+    <string name="thchart_temp">温度历史数据</string>
+    <string name="thchart_hum">湿度历史数据</string>
+    <string name="thchart_clear">清空历史数据</string>
+
 </resources>

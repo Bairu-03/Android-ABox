@@ -1,106 +1,146 @@
 package com.example.abox;
 
+import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.dhc.absdk.ABRet;
 import com.dhc.absdk.ABSDK;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Objects;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 // APP信息显示页（主）
 public class MainActivity extends AppCompatActivity {
-    Boolean socket_state;
-    private Button btn_socket;
-    private Drawable btn_socket_draw;
-    private Button btn_tem_hum;
+    private Button btn_sock, btn_human, btn_tem_hum;
+    private Drawable btn_sock_draw, btn_human_draw;
+    private Boolean human_state, sock_state;
+    private MySQLiteOpenHelper mySQLiteOH;
+    private SQLiteDatabase db;
+    private Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        socket_state = true;
-        btn_socket = findViewById(R.id.btn_socket);
-        btn_socket_draw = getResources().getDrawable(R.drawable.ic_btn_socket_on);
-        btn_socket.setCompoundDrawablesWithIntrinsicBounds(null, btn_socket_draw, null, null);
+        // 插座控制按钮
+        btn_sock = findViewById(R.id.btn_sock);
 
+        // 温湿度显示按钮
         btn_tem_hum = findViewById(R.id.btn_tem_hum);
-        btn_tem_hum.setText(getString(R.string.btn_tem_hum, 0, 0));
+
+        // 人体传感器按钮
+        btn_human = findViewById(R.id.btn_human);
+        human_state = true;
+        btn_human_draw = getResources().getDrawable(R.drawable.ic_btn_human_y);
+        btn_human.setCompoundDrawablesWithIntrinsicBounds(null, btn_human_draw,null, null);
+
+        // 初始化数据库
+        mySQLiteOH = new MySQLiteOpenHelper(MainActivity.this, "appdata.db", null, 1);
     }
 
-//    public void buttonClick(View view) {
-//        new LoginAsyncTask().execute("a", "a");
-//    }
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-//    public void button2Click(View view) {
-//        new TempAsyncTask().execute();
-//    }
+        // 获取数据库读写权限
+        db = mySQLiteOH.getWritableDatabase();
+
+        /* 设置定时任务，用于刷新数据 */
+        final Handler handler = new Handler();
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 获取插座状态
+                        new SockAsyncTask().execute();
+                        // 获取温湿度值
+                        new TempAsyncTask().execute();
+                        Log.d("MainActivity", "定时任务-刷新数据");
+                    }
+                });
+            }
+        };
+        timer.schedule(task, 2, 15000);
+    }
+
+    // Activity停止时关闭定时器
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d("MainActivity", "关闭定时器");
+        timer.cancel();
+    }
+
+    // Activity销毁时关闭数据库
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        db.close();
+    }
 
     // 温湿度按钮点击动作
     public void btn_tem_hum(View view) {
-        btn_tem_hum = findViewById(R.id.btn_tem_hum);
-        btn_tem_hum.setText(getString(R.string.btn_tem_hum, 25, 50));
+        Intent intent = new Intent(MainActivity.this, Activity_THchart.class);
+        startActivity(intent);
     }
 
     // 插座按钮点击动作
     public void btn_socket(View view) {
-        // 若插座已开启，改为关闭
-        if(socket_state){
-            btn_socket_draw = getResources().getDrawable(R.drawable.ic_btn_socket_off);
-            btn_socket.setCompoundDrawablesWithIntrinsicBounds(null, btn_socket_draw, null, null);
-            socket_state = false;
-        // 若插座已关闭，改为开启
+        if(sock_state != null) {
+            if (sock_state) {
+                new SockOffAsyncTask().execute();
+            } else {
+                new SockOnAsyncTask().execute();
+            }
         } else {
-            btn_socket_draw = getResources().getDrawable(R.drawable.ic_btn_socket_on);
-            btn_socket.setCompoundDrawablesWithIntrinsicBounds(null, btn_socket_draw, null, null);
-            socket_state = true;
+            Toast.makeText(MainActivity.this, "插座连接失败", Toast.LENGTH_LONG).show();
         }
     }
 
     // 人体活动按钮点击动作
     public void btn_human(View view) {
+        // 当前有人活动
+        if(human_state) {
+            btn_human_draw = getResources().getDrawable(R.drawable.ic_btn_human_n);
+            btn_human.setCompoundDrawablesWithIntrinsicBounds(null, btn_human_draw, null, null);
+            human_state = false;
+        // 当前无人活动
+        } else {
+            btn_human_draw = getResources().getDrawable(R.drawable.ic_btn_human_y);
+            btn_human.setCompoundDrawablesWithIntrinsicBounds(null, btn_human_draw, null, null);
+            human_state = true;
+        }
     }
 
     // 光照强度按钮点击动作
     public void btn_light(View view) {
     }
 
-
-    public class LoginAsyncTask extends AsyncTask<String, Void, ABRet> {
-        @Override
-        protected ABRet doInBackground(String... strings) {
-            System.out.println(Arrays.toString(strings));
-            return ABSDK.getInstance().loginWithUsername("a", "a");
-        }
-
-        @Override
-        protected void onPostExecute(ABRet abRet) {
-            super.onPostExecute(abRet);
-            System.out.println(abRet.getCode());
-        }
-    }
-
+    // 获取温湿度数据
     public class TempAsyncTask extends AsyncTask<String, Void, ABRet> {
         @Override
         protected ABRet doInBackground(String... strings) {
@@ -110,37 +150,123 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ABRet abRet) {
             super.onPostExecute(abRet);
-            System.out.println(abRet.getCode());
-            System.out.println(abRet.getDicDatas());
-        }
-    }
+            Log.d("MainActivity", "获取温湿度指令错误码：" + abRet.getCode());
 
-    public class UrlAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... strings) {
-            URL url = null;
-            try {
-                url = new URL("http://www.baidu.com");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                InputStream in = conn.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(in));
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    System.out.println(line);
+            if(TextUtils.equals(abRet.getCode(), "00000")) {
+                Log.d("MainActivity", "温湿度数据：" + abRet.getDicDatas());
+                Map<String, Object> map = abRet.getDicDatas();
+                Object temperature = map.get("temperature");
+                Object humidity = map.get("humidity");
+
+                if (temperature != null && humidity != null) {
+                    btn_tem_hum.setText(getString(R.string.btn_tem_hum, temperature.toString(), humidity.toString()));
+
+                    /* 获取系统时间 */
+                    SimpleDateFormat formatter = new SimpleDateFormat("MM-dd HH:mm", Locale.CHINA);
+                    Date curDate = new Date(System.currentTimeMillis());
+                    String ndate = formatter.format(curDate);
+                    Log.d("MainActivity", "获取系统时间:" + ndate);
+
+                    /* 将获取的数据写入数据库 */
+                    ContentValues values = new ContentValues();
+                    values.put("time", ndate);
+                    values.put("temperature", temperature.toString());
+                    values.put("humidity", humidity.toString());
+                    db.insert("data", null, values);
+                } else {
+                    Toast.makeText(MainActivity.this, "温湿度数据格式异常", Toast.LENGTH_LONG).show();
                 }
-                in.close();
-                conn.disconnect();
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } else {
+                Toast.makeText(MainActivity.this, "温湿度数据获取失败", Toast.LENGTH_LONG).show();
             }
-
-            return null;
         }
     }
 
+    // 获取插座状态
+    public class SockAsyncTask extends AsyncTask<String, Void, ABRet> {
+        @Override
+        protected ABRet doInBackground(String... strings) {
+            return ABSDK.getInstance().getSockStatus("ZigBee插座控制器");
+        }
+
+        @Override
+        protected void onPostExecute(ABRet abRet) {
+            super.onPostExecute(abRet);
+            Log.d("MainActivity", "获取插座状态指令错误码：" + abRet.getCode());
+
+            if(TextUtils.equals(abRet.getCode(), "00000")) {
+                Log.d("MainActivity", "插座状态：" + abRet.getDicDatas());
+                Map<String, Object> map = abRet.getDicDatas();
+                Object status = map.get("status");
+
+                if (status != null) {
+                    // 若插座状态为开启
+                    if(TextUtils.equals(status.toString(), "1")){
+                        sock_state = true;
+                        btn_sock_draw = getResources().getDrawable(R.drawable.ic_btn_sock_on);
+                        btn_sock.setCompoundDrawablesWithIntrinsicBounds(null, btn_sock_draw, null, null);
+                    // 若插座状态为关闭
+                    } else {
+                        sock_state = false;
+                        btn_sock_draw = getResources().getDrawable(R.drawable.ic_btn_sock_off);
+                        btn_sock.setCompoundDrawablesWithIntrinsicBounds(null, btn_sock_draw, null, null);
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, "插座状态数据格式异常", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(MainActivity.this, "插座状态获取失败", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    // 控制插座关闭
+    public class SockOffAsyncTask extends AsyncTask<String, Void, ABRet> {
+        @Override
+        protected ABRet doInBackground(String... strings) {
+            return ABSDK.getInstance().sockCtrl("ZigBee插座控制器", "0");
+        }
+
+        @Override
+        protected void onPostExecute(ABRet abRet) {
+            super.onPostExecute(abRet);
+            Log.d("MainActivity", "控制插座关闭指令错误码：" + abRet.getCode());
+
+            if(TextUtils.equals(abRet.getCode(), "00000")) {
+                btn_sock_draw = getResources().getDrawable(R.drawable.ic_btn_sock_off);
+                btn_sock.setCompoundDrawablesWithIntrinsicBounds(null, btn_sock_draw, null, null);
+                sock_state = false;
+            } else {
+                Toast.makeText(MainActivity.this, "关闭插座失败", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    // 控制插座开启
+    public class SockOnAsyncTask extends AsyncTask<String, Void, ABRet> {
+        @Override
+        protected ABRet doInBackground(String... strings) {
+            return ABSDK.getInstance().sockCtrl("ZigBee插座控制器", "1");
+        }
+
+        @Override
+        protected void onPostExecute(ABRet abRet) {
+            super.onPostExecute(abRet);
+            Log.d("MainActivity", "控制插座开启指令错误码：" + abRet.getCode());
+
+            if(TextUtils.equals(abRet.getCode(), "00000")) {
+                btn_sock_draw = getResources().getDrawable(R.drawable.ic_btn_sock_on);
+                btn_sock.setCompoundDrawablesWithIntrinsicBounds(null, btn_sock_draw, null, null);
+                sock_state = true;
+            } else {
+                Toast.makeText(MainActivity.this, "开启插座失败", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+
+
+    // 创建标题栏菜单
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = new MenuInflater(this);
@@ -148,6 +274,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    // 标题栏菜单项目点击事件
     private AlertDialog alertDialog;
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -155,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
         if(item.getItemId() == R.id.m_about){
             alertDialog = new AlertDialog.Builder(this)
                     .setTitle("关于APP")
-                    .setMessage("\n    大连海洋大学 - 电子21-1班 - 吕柏儒")
+                    .setMessage(R.string.about_info)
                     .setIcon(R.mipmap.ic_launcher)
                     .setPositiveButton("关闭", new DialogInterface.OnClickListener() {
                         @Override
