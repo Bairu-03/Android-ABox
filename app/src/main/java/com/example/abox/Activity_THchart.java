@@ -1,6 +1,5 @@
 package com.example.abox;
 
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -30,7 +29,6 @@ import java.util.Map;
 
 public class Activity_THchart extends AppCompatActivity {
     private LineChart lc_temp, lc_hum;
-    private MySQLiteOpenHelper mySQLiteOH;
     private SQLiteDatabase db;
 
     @Override
@@ -46,13 +44,13 @@ public class Activity_THchart extends AppCompatActivity {
         }
 
         // 折线图控件初始化
-        lc_temp = (LineChart) findViewById(R.id.lc_temp);
-        lc_hum = (LineChart) findViewById((R.id.lc_hum));
-        LineChart_Init(lc_temp);
-        LineChart_Init(lc_hum);
+        lc_temp = findViewById(R.id.lc_temp);
+        lc_hum = findViewById((R.id.lc_hum));
+        LineChart_Init(lc_temp, 50);
+        LineChart_Init(lc_hum, 100);
 
         // 初始化数据库
-        mySQLiteOH = new MySQLiteOpenHelper(Activity_THchart.this, "appdata.db", null, 1);
+        MySQLiteOpenHelper mySQLiteOH = new MySQLiteOpenHelper(Activity_THchart.this, "appdata.db", null, 1);
 
         db = mySQLiteOH.getWritableDatabase();
         Log.d("Activity_THchart", "获取数据库权限");
@@ -138,7 +136,8 @@ public class Activity_THchart extends AppCompatActivity {
 
     // 初始化折线图样式
     // chart: 折线图控件
-    public void LineChart_Init(LineChart chart){
+    // YAxisMax: Y轴显示的最大值
+    public void LineChart_Init(LineChart chart, float YAxisMax){
         //显示边框，白色
         chart.setDrawBorders(true);
         chart.setBorderColor(Color.WHITE);
@@ -147,18 +146,19 @@ public class Activity_THchart extends AppCompatActivity {
         chart.setNoDataText("暂无数据");
         chart.setNoDataTextColor(Color.WHITE);
 
-        // X轴显示在下方，字号16，白色，底部偏移30
+        // X轴显示在下方，字号16，白色，底部偏移10
         chart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         chart.getXAxis().setTextSize(16f);
         chart.getXAxis().setTextColor(Color.WHITE);
         chart.getXAxis().setGranularity(1f);
-        chart.setExtraBottomOffset(30f);
+        chart.setExtraBottomOffset(10f);
 
         // 只显示左侧Y轴，字号16，白色
         chart.getAxisRight().setEnabled(false);
         chart.getAxisLeft().setTextSize(16f);
         chart.getAxisLeft().setTextColor(Color.WHITE);
         chart.getAxisLeft().setAxisMinimum(0f);
+        chart.getAxisLeft().setAxisMaximum(YAxisMax);
 
         // 禁用图例
         chart.getLegend().setEnabled(false);

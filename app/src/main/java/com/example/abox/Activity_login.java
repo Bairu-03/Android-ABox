@@ -17,7 +17,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import android.support.v7.app.AppCompatActivity;
 
@@ -170,7 +169,7 @@ public class Activity_login extends AppCompatActivity{
 
             Log.d("loginAbox", "登录过程状态码: " + abRet.getCode());
 
-            if(TextUtils.equals(abRet.getCode(), "20000")){
+            if(TextUtils.equals(abRet.getCode(), "00000")){
                 tV1_err.setText("");
                 // 跳转到信息显示页面
                 Intent intent = new Intent(Activity_login.this, MainActivity.class);
