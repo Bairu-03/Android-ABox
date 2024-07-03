@@ -3,6 +3,7 @@ package com.example.abox;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SyncRequest;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -31,9 +32,9 @@ import java.util.TimerTask;
 
 // APP信息显示页（主）
 public class MainActivity extends AppCompatActivity {
-    private Button btn_sock, btn_human, btn_tem_hum;
-    private Drawable btn_sock_draw, btn_human_draw;
-    private Boolean human_state, sock_state;
+    private Button btn_sock, btn_light, btn_human, btn_tem_hum;
+    private Drawable btn_sock_draw;
+    private Boolean sock_state;
     private MySQLiteOpenHelper mySQLiteOH;
     private SQLiteDatabase db;
     private Timer timer;
@@ -51,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 人体传感器按钮
         btn_human = findViewById(R.id.btn_human);
-        human_state = true;
-        btn_human_draw = getResources().getDrawable(R.drawable.ic_btn_human_y);
-        btn_human.setCompoundDrawablesWithIntrinsicBounds(null, btn_human_draw,null, null);
+
+        // 光感强度按钮
+        btn_light = findViewById(R.id.btn_light);
 
         // 初始化数据库
         mySQLiteOH = new MySQLiteOpenHelper(MainActivity.this, "appdata.db", null, 1);
@@ -79,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
                         new SockAsyncTask().execute();
                         // 获取温湿度值
                         new TempAsyncTask().execute();
+                        // 获取人体传感器数据
+                        new hdAsyncTask().execute();
                         Log.d("MainActivity", "定时任务-刷新数据");
                     }
                 });
@@ -123,17 +126,6 @@ public class MainActivity extends AppCompatActivity {
 
     // 人体活动按钮点击动作
     public void btn_human(View view) {
-        // 当前有人活动
-        if(human_state) {
-            btn_human_draw = getResources().getDrawable(R.drawable.ic_btn_human_n);
-            btn_human.setCompoundDrawablesWithIntrinsicBounds(null, btn_human_draw, null, null);
-            human_state = false;
-        // 当前无人活动
-        } else {
-            btn_human_draw = getResources().getDrawable(R.drawable.ic_btn_human_y);
-            btn_human.setCompoundDrawablesWithIntrinsicBounds(null, btn_human_draw, null, null);
-            human_state = true;
-        }
     }
 
     // 光照强度按钮点击动作
@@ -150,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(ABRet abRet) {
             super.onPostExecute(abRet);
-            Log.d("MainActivity", "获取温湿度指令错误码：" + abRet.getCode());
+            Log.d("MainActivity", "获取温湿度数据指令错误码：" + abRet.getCode());
 
             if(TextUtils.equals(abRet.getCode(), "00000")) {
                 Log.d("MainActivity", "温湿度数据：" + abRet.getDicDatas());
@@ -165,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
                     SimpleDateFormat formatter = new SimpleDateFormat("MM-dd HH:mm", Locale.CHINA);
                     Date curDate = new Date(System.currentTimeMillis());
                     String ndate = formatter.format(curDate);
-                    Log.d("MainActivity", "获取系统时间:" + ndate);
 
                     /* 将获取的数据写入数据库 */
                     ContentValues values = new ContentValues();
@@ -264,7 +255,59 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 获取人体传感器数据
+    public class hdAsyncTask extends AsyncTask<String, Void, ABRet> {
+        @Override
+        protected ABRet doInBackground(String... strings) {
+            return ABSDK.getInstance().getHdStatus("人体活动传感器");
+        }
 
+        @Override
+        protected void onPostExecute(ABRet abRet) {
+            super.onPostExecute(abRet);
+            Log.d("MainActivity", "获取人体传感器数据指令错误码：" + abRet.getCode());
+            Map<String, Object> map = abRet.getDicDatas();
+            Object status = map.get("status");
+            Object lightIntensity = map.get("lightIntensity");
+
+            if(TextUtils.equals(abRet.getCode(), "00000")) {
+                Log.d("MainActivity", "人体传感器数据：" + abRet.getDicDatas());
+                Drawable btn_human_draw;
+                // 有人体活动
+                if (status != null && TextUtils.equals(status.toString(), "1")) {
+                    btn_human_draw = getResources().getDrawable(R.drawable.ic_btn_human_y);
+                // 无人体活动
+                } else {
+                    btn_human_draw = getResources().getDrawable(R.drawable.ic_btn_human_n);
+                }
+                btn_human.setCompoundDrawablesWithIntrinsicBounds(null, btn_human_draw, null, null);
+
+                Drawable btn_light_draw;
+                // 光感强度数据
+                if (lightIntensity != null) {
+                    switch (lightIntensity.toString()){
+                        case "1":
+                            btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_1);
+                            break;
+                        case "2":
+                            btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_2);
+                            break;
+                        case "3":
+                            btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_3);
+                            break;
+                        case "4":
+                            btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_4);
+                            break;
+                        default:
+                            btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_0);
+                    }
+                    btn_light.setCompoundDrawablesWithIntrinsicBounds(null, null, null, btn_light_draw);
+                }
+            } else {
+                Toast.makeText(MainActivity.this, "人体活动传感器数据获取失败", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
     // 创建标题栏菜单
     @Override
