@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#5689E5"
+    android:background="@drawable/shape_gradient"
     tools:context=".Activity_login">
 
     <TextView
@@ -78,7 +78,6 @@
         app:layout_constraintTop_toBottomOf="@+id/eT1_PW"
         app:layout_constraintVertical_bias="0.0" />
 
-    <!--账号或密码错误提示-->
     <Button
         android:id="@+id/bt1_signup"
         android:layout_width="130dp"
@@ -99,23 +98,23 @@
 
     <TextView
         android:id="@+id/tV1_err"
-        android:layout_width="wrap_content"
+        android:layout_width="260dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:textColor="#F2C55C"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.155"
+        app:layout_constraintHorizontal_bias="0.417"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/eT1_PW"
-        app:layout_constraintVertical_bias="0.028" />
+        app:layout_constraintVertical_bias="0.026" />
 
     <CheckBox
         android:id="@+id/cB1_pro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
+
         android:text="@string/login_protocol1"
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/bt1_login"
@@ -132,7 +131,7 @@
         android:onClick="protocol"
         android:text="@string/login_protocol2"
         android:textAlignment="center"
-        android:textColor="#0029AB"
+        android:textColor="#FFF000"
         app:layout_constraintBottom_toTopOf="@+id/bt1_login"
         app:layout_constraintStart_toEndOf="@+id/cB1_pro" />
 

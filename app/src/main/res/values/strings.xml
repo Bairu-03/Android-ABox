@@ -31,4 +31,6 @@
     <string name="thchart_hum">湿度历史数据</string>
     <string name="thchart_clear">清空历史数据</string>
 
+    <!--人体活动和光感数据列表页字符串-->
+    <string name="hllist_title">人体活动和光线强度记录</string>
 </resources>

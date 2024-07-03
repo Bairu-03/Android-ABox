@@ -5,4 +5,5 @@
     <color name="white">#FFFFFF</color>
     <color name="colorButtonNormal">#55FFFFFF</color>
     <color name="colorButtonPress">#99FFFFFF</color>
+    <color name="colorStartupPageNavigationBar">#644CA6</color>
 </resources>

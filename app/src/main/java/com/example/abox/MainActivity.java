@@ -3,7 +3,6 @@ package com.example.abox;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SyncRequest;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -98,13 +97,6 @@ public class MainActivity extends AppCompatActivity {
         timer.cancel();
     }
 
-    // Activity销毁时关闭数据库
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        db.close();
-    }
-
     // 温湿度按钮点击动作
     public void btn_tem_hum(View view) {
         Intent intent = new Intent(MainActivity.this, Activity_THchart.class);
@@ -126,10 +118,14 @@ public class MainActivity extends AppCompatActivity {
 
     // 人体活动按钮点击动作
     public void btn_human(View view) {
+        Intent intent = new Intent(MainActivity.this, Activity_HLlist.class);
+        startActivity(intent);
     }
 
     // 光照强度按钮点击动作
     public void btn_light(View view) {
+        Intent intent = new Intent(MainActivity.this, Activity_HLlist.class);
+        startActivity(intent);
     }
 
     // 获取温湿度数据
@@ -150,27 +146,28 @@ public class MainActivity extends AppCompatActivity {
                 Object temperature = map.get("temperature");
                 Object humidity = map.get("humidity");
 
-                if (temperature != null && humidity != null) {
-                    btn_tem_hum.setText(getString(R.string.btn_tem_hum, temperature.toString(), humidity.toString()));
+                btn_tem_hum.setText(getString(R.string.btn_tem_hum, temperature.toString(), humidity.toString()));
 
-                    /* 获取系统时间 */
-                    SimpleDateFormat formatter = new SimpleDateFormat("MM-dd HH:mm", Locale.CHINA);
-                    Date curDate = new Date(System.currentTimeMillis());
-                    String ndate = formatter.format(curDate);
+                /* 将获取的数据写入数据库 */
+                ContentValues values = new ContentValues();
+                values.put("time", getdate());  // 获取当前时间
+                values.put("temperature", temperature.toString());
+                values.put("humidity", humidity.toString());
+                db.insert("THdata", null, values);
 
-                    /* 将获取的数据写入数据库 */
-                    ContentValues values = new ContentValues();
-                    values.put("time", ndate);
-                    values.put("temperature", temperature.toString());
-                    values.put("humidity", humidity.toString());
-                    db.insert("data", null, values);
-                } else {
-                    Toast.makeText(MainActivity.this, "温湿度数据格式异常", Toast.LENGTH_LONG).show();
-                }
             } else {
                 Toast.makeText(MainActivity.this, "温湿度数据获取失败", Toast.LENGTH_LONG).show();
+                btn_tem_hum.setText(getString(R.string.btn_tem_hum, "0", "0"));
             }
         }
+    }
+
+    // 获取系统时间
+    private static String getdate() {
+        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd HH:mm", Locale.CHINA);
+        Date curDate = new Date(System.currentTimeMillis());
+        String ndate = formatter.format(curDate);
+        return ndate;
     }
 
     // 获取插座状态
@@ -190,20 +187,16 @@ public class MainActivity extends AppCompatActivity {
                 Map<String, Object> map = abRet.getDicDatas();
                 Object status = map.get("status");
 
-                if (status != null) {
-                    // 若插座状态为开启
-                    if(TextUtils.equals(status.toString(), "1")){
-                        sock_state = true;
-                        btn_sock_draw = getResources().getDrawable(R.drawable.ic_btn_sock_on);
-                        btn_sock.setCompoundDrawablesWithIntrinsicBounds(null, btn_sock_draw, null, null);
-                    // 若插座状态为关闭
-                    } else {
-                        sock_state = false;
-                        btn_sock_draw = getResources().getDrawable(R.drawable.ic_btn_sock_off);
-                        btn_sock.setCompoundDrawablesWithIntrinsicBounds(null, btn_sock_draw, null, null);
-                    }
+                // 若插座状态为开启
+                if(TextUtils.equals(status.toString(), "1")){
+                    sock_state = true;
+                    btn_sock_draw = getResources().getDrawable(R.drawable.ic_btn_sock_on);
+                    btn_sock.setCompoundDrawablesWithIntrinsicBounds(null, btn_sock_draw, null, null);
+                // 若插座状态为关闭
                 } else {
-                    Toast.makeText(MainActivity.this, "插座状态数据格式异常", Toast.LENGTH_LONG).show();
+                    sock_state = false;
+                    btn_sock_draw = getResources().getDrawable(R.drawable.ic_btn_sock_off);
+                    btn_sock.setCompoundDrawablesWithIntrinsicBounds(null, btn_sock_draw, null, null);
                 }
             } else {
                 Toast.makeText(MainActivity.this, "插座状态获取失败", Toast.LENGTH_LONG).show();
@@ -266,46 +259,57 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(ABRet abRet) {
             super.onPostExecute(abRet);
             Log.d("MainActivity", "获取人体传感器数据指令错误码：" + abRet.getCode());
-            Map<String, Object> map = abRet.getDicDatas();
-            Object status = map.get("status");
-            Object lightIntensity = map.get("lightIntensity");
 
+            Drawable btn_human_draw;
+            Drawable btn_light_draw;
+
+            // 数据获取成功
             if(TextUtils.equals(abRet.getCode(), "00000")) {
+                Map<String, Object> map = abRet.getDicDatas();
+                Object status = map.get("status");
+                Object lightIntensity = map.get("lightIntensity");
                 Log.d("MainActivity", "人体传感器数据：" + abRet.getDicDatas());
-                Drawable btn_human_draw;
+
+                /* 将获取的数据写入数据库 */
+                ContentValues values = new ContentValues();
+                values.put("time", getdate());  // 获取当前时间
+                values.put("human", status.toString());
+                values.put("light", lightIntensity.toString());
+                db.insert("HLdata", null, values);
+
                 // 有人体活动
-                if (status != null && TextUtils.equals(status.toString(), "1")) {
+                if (TextUtils.equals(status.toString(), "1")) {
                     btn_human_draw = getResources().getDrawable(R.drawable.ic_btn_human_y);
                 // 无人体活动
                 } else {
                     btn_human_draw = getResources().getDrawable(R.drawable.ic_btn_human_n);
                 }
-                btn_human.setCompoundDrawablesWithIntrinsicBounds(null, btn_human_draw, null, null);
 
-                Drawable btn_light_draw;
                 // 光感强度数据
-                if (lightIntensity != null) {
-                    switch (lightIntensity.toString()){
-                        case "1":
-                            btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_1);
-                            break;
-                        case "2":
-                            btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_2);
-                            break;
-                        case "3":
-                            btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_3);
-                            break;
-                        case "4":
-                            btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_4);
-                            break;
-                        default:
-                            btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_0);
-                    }
-                    btn_light.setCompoundDrawablesWithIntrinsicBounds(null, null, null, btn_light_draw);
+                switch (lightIntensity.toString()){
+                    case "1":
+                        btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_1);
+                        break;
+                    case "2":
+                        btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_2);
+                        break;
+                    case "3":
+                        btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_3);
+                        break;
+                    case "4":
+                        btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_4);
+                        break;
+                    default:
+                        btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_0);
                 }
+
             } else {
                 Toast.makeText(MainActivity.this, "人体活动传感器数据获取失败", Toast.LENGTH_LONG).show();
+                btn_human_draw = getResources().getDrawable(R.drawable.ic_btn_human_n);
+                btn_light_draw = getResources().getDrawable(R.drawable.ic_btn_light_0);
             }
+            btn_human.setCompoundDrawablesWithIntrinsicBounds(null, btn_human_draw, null, null);
+            btn_light.setCompoundDrawablesWithIntrinsicBounds(null, null, null, btn_light_draw);
         }
     }
 
@@ -338,4 +342,12 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    // Activity销毁时关闭数据库
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        db.close();
+    }
+
 }

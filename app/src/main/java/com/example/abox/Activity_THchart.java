@@ -56,8 +56,8 @@ public class Activity_THchart extends AppCompatActivity {
         Log.d("Activity_THchart", "获取数据库权限");
 
         // 遍历数据库
-        Cursor cursor = db.rawQuery("SELECT * FROM data", null);
-        // 若数据库不为空
+        Cursor cursor = db.rawQuery("SELECT * FROM THdata", null);
+        // 若数据库表内条目大于1
         if(cursor.getCount() > 1){
             List<Entry> tempList = new ArrayList<>();
             List<Entry> humList = new ArrayList<>();
@@ -67,15 +67,15 @@ public class Activity_THchart extends AppCompatActivity {
                 do {
                     // 读取时间列
                     int id = cursor.getInt(cursor.getColumnIndex("id"));
-                    String datet = cursor.getString(cursor.getColumnIndex("time"));
-                    Log.d("Activity_THchart", datet);
-                    dateMap.put(id, datet);
+                    String dateT = cursor.getString(cursor.getColumnIndex("time"));
+                    dateMap.put(id, dateT);
                     // 读取温度列
-                    String tempt = cursor.getString(cursor.getColumnIndex("temperature"));
-                    tempList.add(new Entry(i, Float.parseFloat(tempt)));
+                    String tempT = cursor.getString(cursor.getColumnIndex("temperature"));
+                    tempList.add(new Entry(i, Float.parseFloat(tempT)));
                     // 读取湿度列
-                    String humt = cursor.getString(cursor.getColumnIndex("humidity"));
-                    humList.add(new Entry(i, Float.parseFloat(humt)));
+                    String humT = cursor.getString(cursor.getColumnIndex("humidity"));
+                    humList.add(new Entry(i, Float.parseFloat(humT)));
+
                     i++;
                 } while (cursor.moveToNext());
             }
@@ -108,8 +108,9 @@ public class Activity_THchart extends AppCompatActivity {
     }
 
     public void clearData(View view) {
-        db.delete("data", null, null);
-        db.execSQL("update sqlite_sequence set seq=0 where name='data'");
+        // 删除数据库THdata表内容
+        db.delete("THdata", null, null);
+        db.execSQL("update sqlite_sequence set seq=0 where name='THdata'");
 
         // 清空图表
         lc_hum.clear(); lc_temp.clear();

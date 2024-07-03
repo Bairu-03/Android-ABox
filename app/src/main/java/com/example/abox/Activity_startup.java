@@ -1,6 +1,7 @@
 package com.example.abox;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,10 @@ public class Activity_startup extends AppCompatActivity {
 
         // 隐藏标题栏
         Objects.requireNonNull(getSupportActionBar()).hide();
+
+        // 设置导航栏、状态栏颜色
+        getWindow().setNavigationBarColor(getResources().getColor(R.color.colorStartupPageNavigationBar));
+        getWindow().setStatusBarColor(Color.WHITE);
 
         // 启动定时器，延时3s进登录页
         Timer timer = new Timer();

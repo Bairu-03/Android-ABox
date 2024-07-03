@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2481FF"
+    android:background="@drawable/shape_gradient"
     tools:context=".Activity_signup">
 
     <TextView
@@ -13,13 +13,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/signup_title"
-        android:textSize="34sp"
         android:textColor="@color/white"
+        android:textSize="34sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.089" />
+        app:layout_constraintVertical_bias="0.092" />
 
     <EditText
         android:id="@+id/eT3_ID"
@@ -41,7 +42,6 @@
         app:layout_constraintTop_toBottomOf="@+id/tV3_title"
         app:layout_constraintVertical_bias="0.093" />
 
-    <!--输入错误提示-->
     <EditText
         android:id="@+id/eT3_PW"
         android:layout_width="300dp"
@@ -84,13 +84,14 @@
 
     <TextView
         android:id="@+id/tV3_err"
-        android:layout_width="wrap_content"
+        android:layout_width="260dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:textColor="#F2C55C"
-        android:textSize="16dp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.15"
+        app:layout_constraintHorizontal_bias="0.417"
+        app:layout_constraintVertical_bias="0.026"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/eT3_rePW" />
 
